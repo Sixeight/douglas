@@ -1,0 +1,18 @@
+{
+  "name": "douglas",
+  "main": "./lib/douglas",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "keywords": [
+  ],
+  "activationCommands": {
+    "atom-workspace": "douglas:toggle"
+  },
+  "repository": "https://github.com/atom/douglas",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}
