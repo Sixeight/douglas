@@ -7,14 +7,9 @@ module.exports = Douglas =
   subscriptions: null
 
   activate: (state) ->
-    @douglasView = new DouglasView(state.douglasViewState)
-    @modalPanel = atom.workspace.addModalPanel(item: @douglasView.getElement(), visible: false)
-
-    # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
-
-    # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'douglas:toggle': => @toggle()
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'douglas:toggle': => @toggle()
 
   deactivate: ->
     @modalPanel.destroy()
@@ -25,9 +20,4 @@ module.exports = Douglas =
     douglasViewState: @douglasView.serialize()
 
   toggle: ->
-    console.log 'Douglas was toggled!'
-
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
-    else
-      @modalPanel.show()
+    @douglasView = new DouglasView()

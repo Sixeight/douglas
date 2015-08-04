@@ -1,22 +1,42 @@
+{$$, SelectListView} = require 'atom-space-pen-views'
+{BufferedProcess} = require 'atom'
+path = require 'path'
+
 module.exports =
-class DouglasView
-  constructor: (serializedState) ->
-    # Create root element
-    @element = document.createElement('div')
-    @element.classList.add('douglas')
+class DouglasView extends SelectListView
+  initialize: ->
+    super
+    @addClass('douglas')
+    @panel ?= atom.workspace.addModalPanel(item: this)
+    @process = @fetchList =>
+      @panel.show()
+      @focusFilterEditor()
 
-    # Create message element
-    message = document.createElement('div')
-    message.textContent = "The Douglas package is Alive! It's ALIVE!"
-    message.classList.add('message')
-    @element.appendChild(message)
+  viewForItem: (fullPath) ->
+    basePath = path.basename fullPath
+    $$ ->
+      @li class: 'two-lines', =>
+        @div basePath, class: 'primary-line file icon icon-repo'
+        @div fullPath, class: 'secondary-line path no-icon'
 
-  # Returns an object that can be retrieved when package is activated
-  serialize: ->
+  confirmed: (item) ->
+    @panel?.hide()
+    atom.open pathsToOpen: [item]
+    atom.focus()
 
-  # Tear down any state and detach
-  destroy: ->
-    @element.remove()
+  cancelled: ->
+    @panel?.hide()
+    @process?.kill()
+    @process = null
 
-  getElement: ->
-    @element
+  fetchList: (callback) ->
+    paths = []
+    command = 'ghq'
+    args = ['list', '--full-path']
+    stdout = (output) =>
+       paths = paths.concat output.split('\n')
+    exit = (code) =>
+      return unless code == 0
+      @setItems paths
+      callback()
+    new BufferedProcess({command, args, stdout, exit})
