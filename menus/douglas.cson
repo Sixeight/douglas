@@ -2,7 +2,7 @@
 'context-menu':
   'atom-text-editor': [
     {
-      'label': 'Toggle douglas'
+      'label': 'Toggle'
       'command': 'douglas:toggle'
     }
   ]
@@ -10,7 +10,7 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'douglas'
+      'label': 'Douglas'
       'submenu': [
         {
           'label': 'Toggle'
