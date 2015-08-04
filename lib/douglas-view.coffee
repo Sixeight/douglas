@@ -26,7 +26,8 @@ class DouglasView extends SelectListView
   show: ->
     @storeFocusedElement()
     @panel ?= atom.workspace.addModalPanel(item: this)
-    @process = @_fetchList =>
+    @process = @_fetchList (paths) =>
+      @setItems paths
       @panel.show()
       @focusFilterEditor()
 
@@ -42,10 +43,9 @@ class DouglasView extends SelectListView
     paths = []
     command = 'ghq'
     args = ['list', '--full-path']
-    stdout = (output) =>
+    stdout = (output) ->
        paths = paths.concat output.split('\n')
-    exit = (code) =>
+    exit = (code) ->
       return unless code == 0
-      @setItems paths
-      callback()
+      callback paths
     new BufferedProcess({command, args, stdout, exit})
