@@ -20,4 +20,5 @@ module.exports = Douglas =
     douglasViewState: @douglasView.serialize()
 
   toggle: ->
-    @douglasView = new DouglasView()
+    @douglasView ?= new DouglasView()
+    @douglasView.toggle()

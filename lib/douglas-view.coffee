@@ -7,10 +7,6 @@ class DouglasView extends SelectListView
   initialize: ->
     super
     @addClass('douglas')
-    @panel ?= atom.workspace.addModalPanel(item: this)
-    @process = @fetchList =>
-      @panel.show()
-      @focusFilterEditor()
 
   viewForItem: (fullPath) ->
     basePath = path.basename fullPath
@@ -24,12 +20,25 @@ class DouglasView extends SelectListView
     atom.open pathsToOpen: [item]
     atom.focus()
 
-  cancelled: ->
+  toggle: ->
+    if @panel?.isVisible() then @cancel() else @show()
+
+  show: ->
+    @storeFocusedElement()
+    @panel ?= atom.workspace.addModalPanel(item: this)
+    @process = @_fetchList =>
+      @panel.show()
+      @focusFilterEditor()
+
+  hide: ->
     @panel?.hide()
     @process?.kill()
     @process = null
 
-  fetchList: (callback) ->
+  cancelled: ->
+    @hide()
+
+  _fetchList: (callback) ->
     paths = []
     command = 'ghq'
     args = ['list', '--full-path']
