@@ -1,7 +1,7 @@
 {$$, SelectListView} = require 'atom-space-pen-views'
-{BufferedProcess} = require 'atom'
 path = require 'path'
 fuzzaldrin = require 'fuzzaldrin'
+ghq = require './ghq'
 
 module.exports =
 class DouglasView extends SelectListView
@@ -67,12 +67,5 @@ class DouglasView extends SelectListView
     @hide()
 
   _fetchList: (callback) ->
-    paths = []
-    command = 'ghq'
-    args = ['list', '--full-path']
-    stdout = (output) ->
-       paths = paths.concat output.split('\n')
-    exit = (code) ->
-      return unless code == 0
-      callback paths
-    new BufferedProcess({command, args, stdout, exit})
+    ghq.list '--full-path', (outputs) ->
+      callback outputs.split '\n'
