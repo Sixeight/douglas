@@ -40,7 +40,7 @@ class DouglasView extends SelectListView
 
       @li class: 'two-lines', =>
         @div class: 'primary-line file icon icon-repo', -> highlighter(basePath, matches, offset)
-        @div class: 'secondary-line path no-icon', -> highlighter(fullPath, matches, 0)
+        @div fullPath, class: 'secondary-line path no-icon'
 
   confirmed: (item) ->
     @panel?.hide()
