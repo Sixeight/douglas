@@ -5,16 +5,25 @@ ghq = require './ghq'
 
 module.exports =
 class DouglasView extends SelectListView
+  roots: []
+
   initialize: ->
     super
     @addClass('douglas')
+    ghq.rootAll (outputs) =>
+      @roots = outputs.trim().split('\n')
 
   viewForItem: (fullPath) ->
+    relativePath = fullPath
+    for root in @roots
+      continue if relativePath.indexOf(root) <= -1
+      relativePath = relativePath.substring(root.length + 1)
+
     filterQuery = @getFilterQuery()
-    matches = fuzzaldrin.match(fullPath, filterQuery)
+    matches = fuzzaldrin.match(relativePath, filterQuery)
 
     basePath = path.basename fullPath
-    offset = fullPath.length - basePath.length
+    baseOffset = relativePath.length - basePath.length
 
     $$ ->
       # inspired by fuzzy-finder
@@ -39,8 +48,8 @@ class DouglasView extends SelectListView
         @text text.substring(lastIndex)
 
       @li class: 'two-lines', =>
-        @div class: 'primary-line file icon icon-repo', -> highlighter(basePath, matches, offset)
-        @div fullPath, class: 'secondary-line path no-icon'
+        @div class: 'primary-line file icon icon-repo', -> highlighter(basePath, matches, baseOffset)
+        @div class: 'secondary-line path no-icon', -> highlighter(relativePath, matches, 0)
 
   confirmed: (item) ->
     @panel?.hide()

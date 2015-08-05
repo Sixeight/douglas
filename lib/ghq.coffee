@@ -3,6 +3,13 @@
 module.exports = ghq =
   command: 'ghq'
 
+  rootAll: (callback) ->
+    @root '--all', callback
+
+  root: (args..., callback) ->
+    args.unshift('root')
+    @run args, callback
+
   list: (args..., callback) ->
     args.unshift('list')
     @run args, callback
