@@ -1,6 +1,7 @@
 {$$, SelectListView} = require 'atom-space-pen-views'
 {BufferedProcess} = require 'atom'
 path = require 'path'
+fuzzaldrin = require 'fuzzaldrin'
 
 module.exports =
 class DouglasView extends SelectListView
@@ -9,11 +10,37 @@ class DouglasView extends SelectListView
     @addClass('douglas')
 
   viewForItem: (fullPath) ->
+    filterQuery = @getFilterQuery()
+    matches = fuzzaldrin.match(fullPath, filterQuery)
+
     basePath = path.basename fullPath
+    offset = fullPath.length - basePath.length
+
     $$ ->
+      # inspired by fuzzy-finder
+      highlighter = (text, matches, offsetIndex) =>
+        lastIndex = 0
+        matchedChars = []
+
+        for matchIndex in matches
+          matchIndex -= offsetIndex
+          continue if matchIndex < 0
+          unmatched = text.substring(lastIndex, matchIndex)
+          if unmatched
+            @span matchedChars.join(''), class: 'character-match' if matchedChars.length
+            matchedChars = []
+            @text unmatched
+          matchedChars.push(text[matchIndex])
+          lastIndex = matchIndex + 1
+
+        @span matchedChars.join(''), class: 'character-match' if matchedChars.length
+
+        # Remaining characters are plain text
+        @text text.substring(lastIndex)
+
       @li class: 'two-lines', =>
-        @div basePath, class: 'primary-line file icon icon-repo'
-        @div fullPath, class: 'secondary-line path no-icon'
+        @div class: 'primary-line file icon icon-repo', -> highlighter(basePath, matches, offset)
+        @div class: 'secondary-line path no-icon', -> highlighter(fullPath, matches, 0)
 
   confirmed: (item) ->
     @panel?.hide()
