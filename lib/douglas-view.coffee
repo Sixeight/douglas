@@ -10,8 +10,6 @@ class DouglasView extends SelectListView
   initialize: ->
     super
     @addClass('douglas')
-    ghq.rootAll (outputs) =>
-      @roots = outputs.trim().split('\n')
 
   viewForItem: (fullPath) ->
     relativePath = fullPath
@@ -76,5 +74,8 @@ class DouglasView extends SelectListView
     @hide()
 
   _fetchList: (callback) ->
-    ghq.list '--full-path', (outputs) ->
-      callback outputs.split '\n'
+    # care new roots since atom started
+    ghq.rootAll (outputs) =>
+      @roots = outputs.trim().split('\n')
+      ghq.list '--full-path', (outputs) ->
+        callback outputs.split '\n'
