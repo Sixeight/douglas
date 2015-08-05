@@ -16,4 +16,11 @@ module.exports = ghq =
       return unless code == 0
       callback outputs
 
-    new BufferedProcess({@command, args, stdout, exit})
+    process = new BufferedProcess({@command, args, stdout, exit})
+    process.onWillThrowError (error) ->
+      message = 'Douglas is unable to locate `ghq` command.<br />' +
+                'Make sure ghq is installed and on your PATH.<br />' +
+                'see also: https://github.com/motemen/ghq'
+      atom.notifications.addError message, dismissable: true
+      error.handle()
+    process
