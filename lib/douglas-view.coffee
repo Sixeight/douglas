@@ -51,15 +51,16 @@ class DouglasView extends SelectListView
 
   show: ->
     @storeFocusedElement()
-    @panel ?= atom.workspace.addModalPanel(item: this)
     @process = @_fetchList (paths) =>
+      return if paths.length <= 0
       @setItems paths
+      @panel ?= atom.workspace.addModalPanel(item: this)
       @panel.show()
       @focusFilterEditor()
 
   hide: ->
     @panel?.hide()
-    @process?.kill()
+    @process?.kill?()
     @process = null
 
   cancelled: ->
