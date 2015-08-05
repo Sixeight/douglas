@@ -6,6 +6,10 @@ the `ghq` interface for Atom.
 
 ![screenshot](./screenshot.png)
 
+## See also
+
+* https://github.com/motemen/ghq
+
 ## Similar projects
 
 * https://github.com/syohex/atom-ghq
