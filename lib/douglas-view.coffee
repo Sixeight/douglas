@@ -45,7 +45,6 @@ class DouglasView extends SelectListView
   confirmed: (item) ->
     @panel?.hide()
     atom.open pathsToOpen: [item]
-    atom.focus()
 
   toggle: ->
     if @panel?.isVisible() then @cancel() else @show()
