@@ -1,7 +1,7 @@
 {
   "name": "douglas",
   "main": "./lib/douglas",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Douglas is the ghq interface for Atom.",
   "keywords": [],
   "activationCommands": {
