@@ -11,16 +11,16 @@ class DouglasView extends SelectListView
     super
     @addClass('douglas')
 
-  viewForItem: (fullPath) ->
-    relativePath = fullPath
-    for root in @roots
-      continue if relativePath.indexOf(root) <= -1
-      relativePath = relativePath.substring(root.length + 1)
+  getFilterKey: ->
+    'relativePath'
+
+  viewForItem: (item) ->
+    relativePath = item[@getFilterKey()]
 
     filterQuery = @getFilterQuery()
     matches = fuzzaldrin.match(relativePath, filterQuery)
 
-    basePath = path.basename fullPath
+    basePath = path.basename relativePath
     baseOffset = relativePath.length - basePath.length
 
     $$ ->
@@ -51,7 +51,7 @@ class DouglasView extends SelectListView
 
   confirmed: (item) ->
     @panel?.hide()
-    atom.open pathsToOpen: [item]
+    atom.open pathsToOpen: [item.fullPath]
 
   toggle: ->
     if @panel?.isVisible() then @cancel() else @show()
@@ -60,7 +60,7 @@ class DouglasView extends SelectListView
     @storeFocusedElement()
     @process = @_fetchList (paths) =>
       return if paths.length <= 0
-      @setItems paths
+      @setItems paths.map @_normalizeItem.bind(this)
       @panel ?= atom.workspace.addModalPanel(item: this)
       @panel.show()
       @focusFilterEditor()
@@ -73,9 +73,17 @@ class DouglasView extends SelectListView
   cancelled: ->
     @hide()
 
+
   _fetchList: (callback) ->
     # care new roots since atom started
     ghq.rootAll (outputs) =>
       @roots = outputs.trim().split('\n')
       ghq.list '--full-path', (outputs) ->
         callback outputs.split '\n'
+
+  _normalizeItem: (fullPath) ->
+    relativePath = fullPath
+    for root in @roots
+      continue if relativePath.indexOf(root) <= -1
+      relativePath = relativePath.substring(root.length + 1)
+    {fullPath: fullPath, relativePath: relativePath}
