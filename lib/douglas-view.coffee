@@ -79,7 +79,7 @@ class DouglasView extends SelectListView
     ghq.rootAll (outputs) =>
       @roots = outputs.trim().split('\n')
       ghq.list '--full-path', (outputs) ->
-        callback outputs.split '\n'
+        callback outputs.trim().split('\n')
 
   _normalizeItem: (fullPath) ->
     relativePath = fullPath
